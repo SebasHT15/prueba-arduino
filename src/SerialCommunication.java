@@ -16,6 +16,10 @@ public class SerialCommunication {
     }
     static String contraseña = "";
 
+    public static String getContraseña(){
+        return contraseña;
+    }
+
     private static void enviarDato(int dato) {
         String mensaje = Integer.toString(dato);
         byte[] buffer = mensaje.getBytes();
@@ -23,7 +27,7 @@ public class SerialCommunication {
         System.out.println("Dato enviado: " + dato);
     }
 
-    public static void main(String[] args) {
+    public static void recibirDato(){
         // Obtén una instancia de la librería jSerialComm
             serialPort = SerialPort.getCommPort("COM3"); // Reemplaza "COM3" con el puerto serial correcto
 
@@ -53,11 +57,10 @@ public class SerialCommunication {
 
                             //contraseña
                             contraseña = String.valueOf(getConcatenatedString());
-                            System.out.println(contraseña);
                             //
 
                             //huffman
-                            Map<Character, String> huffmanCodes = HuffmanEncoder.compress(contraseña);
+                            Map<Character, String> huffmanCodes = HuffmanEncoder.compress(getContraseña());
                             System.out.println("Huffman Codes:");
                             for (Map.Entry<Character, String> entry : huffmanCodes.entrySet()) {
                                 System.out.println(entry.getKey() + ": " + entry.getValue());
