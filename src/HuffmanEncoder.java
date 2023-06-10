@@ -3,7 +3,7 @@ import java.util.Map;
 import java.util.PriorityQueue;
 
 public class HuffmanEncoder {
-    private static class HuffmanNode implements Comparable<HuffmanNode> {
+    static class HuffmanNode implements Comparable<HuffmanNode> {
         char character;
         int frequency;
         HuffmanNode left;
@@ -22,14 +22,36 @@ public class HuffmanEncoder {
         }
     }
 
-    public static Map<Character, String> compress(String input) {
+    public static String compress(String input) {
         Map<Character, Integer> frequencyMap = getCharacterFrequency(input);
         HuffmanNode root = buildHuffmanTree(frequencyMap);
         Map<Character, String> huffmanCodes = generateHuffmanCodes(root);
-        return huffmanCodes;
+        StringBuilder compressedString = new StringBuilder();
+        for (char c : input.toCharArray()) {
+            compressedString.append(huffmanCodes.get(c));
+        }
+        return compressedString.toString();
     }
 
-    private static Map<Character, Integer> getCharacterFrequency(String input) {
+    public static String decompress(String compressedString, HuffmanNode root) {
+        StringBuilder decompressedString = new StringBuilder();
+        HuffmanNode currentNode = root;
+        for (char bit : compressedString.toCharArray()) {
+            if (bit == '0') {
+                currentNode = currentNode.left;
+            } else if (bit == '1') {
+                currentNode = currentNode.right;
+            }
+
+            if (currentNode.left == null && currentNode.right == null) {
+                decompressedString.append(currentNode.character);
+                currentNode = root;
+            }
+        }
+        return decompressedString.toString();
+    }
+
+    public static Map<Character, Integer> getCharacterFrequency(String input) {
         Map<Character, Integer> frequencyMap = new HashMap<>();
         for (char c : input.toCharArray()) {
             frequencyMap.put(c, frequencyMap.getOrDefault(c, 0) + 1);
@@ -37,7 +59,7 @@ public class HuffmanEncoder {
         return frequencyMap;
     }
 
-    private static HuffmanNode buildHuffmanTree(Map<Character, Integer> frequencyMap) {
+    static HuffmanNode buildHuffmanTree(Map<Character, Integer> frequencyMap) {
         PriorityQueue<HuffmanNode> priorityQueue = new PriorityQueue<>();
 
         for (Map.Entry<Character, Integer> entry : frequencyMap.entrySet()) {

@@ -1,6 +1,4 @@
 import com.fazecast.jSerialComm.*;
-import java.util.*;
-
 public class SerialCommunication {
     private static SerialPort serialPort;
 
@@ -16,10 +14,6 @@ public class SerialCommunication {
     }
     static String contraseña = "";
 
-    public static String getContraseña(){
-        return contraseña;
-    }
-
     private static void enviarDato(int dato) {
         String mensaje = Integer.toString(dato);
         byte[] buffer = mensaje.getBytes();
@@ -27,7 +21,7 @@ public class SerialCommunication {
         System.out.println("Dato enviado: " + dato);
     }
 
-    public static void recibirDato(){
+    public static String recibirDato(){
         // Obtén una instancia de la librería jSerialComm
             serialPort = SerialPort.getCommPort("COM3"); // Reemplaza "COM3" con el puerto serial correcto
 
@@ -42,7 +36,14 @@ public class SerialCommunication {
 
                 // Crea un hilo para recibir datos continuamente
                 Thread thread = new Thread(() -> {
+                    long startTime = System.currentTimeMillis();
                     while (serialPort.isOpen()) {
+                        // Verifica si ha pasado cierto tiempo y detiene el hilo de recepción
+                        long elapsedTime = System.currentTimeMillis() - startTime;
+                        if (elapsedTime >= 10000) { // Reemplaza TIEMPO_LIMITE con el tiempo deseado en milisegundos
+                            break;
+                        }
+
                         // Verifica si hay datos disponibles para leer
                         if (serialPort.bytesAvailable() > 0) {
                             // Lee los datos del puerto serial
@@ -54,18 +55,7 @@ public class SerialCommunication {
 
                             // Concatena el string recibido al string acumulado
                             concatenatedString.append(data);
-
-                            //contraseña
                             contraseña = String.valueOf(getConcatenatedString());
-                            //
-
-                            //huffman
-                            Map<Character, String> huffmanCodes = HuffmanEncoder.compress(getContraseña());
-                            System.out.println("Huffman Codes:");
-                            for (Map.Entry<Character, String> entry : huffmanCodes.entrySet()) {
-                                System.out.println(entry.getKey() + ": " + entry.getValue());
-                            }
-                            //
                         }
                     }
                 });
@@ -73,24 +63,29 @@ public class SerialCommunication {
                 // Inicia el hilo de recepción de datos
                 thread.start();
 
-                // Espera a que el usuario decida terminar el programa (opcional)
-                try {
-                    System.in.read();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-
-                // Detiene el hilo de recepción de datos
-                thread.interrupt();
+                // Espera a que el hilo termine antes de continuar
                 try {
                     thread.join();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
 
+                // Detiene el hilo de recepción de datos si aún está en ejecución
+                if (thread.isAlive()) {
+                    thread.interrupt();
+                }
+
+                // Cierra el puerto serial
+                serialPort.closePort();
+
                 System.out.println("Puerto serial cerrado.");
+
+                // Devuelve la contraseña obtenida
+                return contraseña;
             } else {
                 System.out.println("No se pudo abrir el puerto serial.");
             }
+
+        return null;
     }
 }
