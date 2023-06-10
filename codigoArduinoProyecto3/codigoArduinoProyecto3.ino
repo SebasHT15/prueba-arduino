@@ -141,11 +141,15 @@ void emitirSonido() {
 void encenderLed1() {
   // Encender el LED 1
   digitalWrite(led1, HIGH);
-  digitalWrite(led2, LOW);  // Apagar el LED 2 (si estaba encendido)
+  delay(3000);
+  digitalWrite(led1, LOW);
+  
 }
 
 void encenderLed2() {
   // Encender el LED 2
-  digitalWrite(led1, LOW);  // Apagar el LED 1 (si estaba encendido)
   digitalWrite(led2, HIGH);
+  delay(3000);
+  digitalWrite(led2, LOW);
+  
 }
