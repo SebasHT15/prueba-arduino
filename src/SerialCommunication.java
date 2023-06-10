@@ -14,11 +14,35 @@ public class SerialCommunication {
     }
     static String contraseña = "";
 
-    private static void enviarDato(int dato) {
-        String mensaje = Integer.toString(dato);
-        byte[] buffer = mensaje.getBytes();
-        serialPort.writeBytes(buffer, buffer.length);
-        System.out.println("Dato enviado: " + dato);
+    public static void enviarDato(String dato) {
+
+        serialPort = SerialPort.getCommPort("COM3"); // Reemplaza "COM3" con el puerto serial correcto
+
+        serialPort.setComPortParameters(9600, 8, 1, SerialPort.NO_PARITY);
+
+        // Abre el puerto serial
+        if (serialPort.openPort()) {
+            System.out.println("Puerto serial abierto correctamente.");
+
+            // Espera un tiempo antes de enviar el dato
+            try {
+                Thread.sleep(2000); // Espera 2 segundos (puedes ajustar este valor según tus necesidades)
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            // Envia el dato
+            byte[] buffer = dato.getBytes();
+            serialPort.writeBytes(buffer, buffer.length);
+            System.out.println("Dato enviado después de cerrar el puerto: " + dato);
+
+            // Cierra el puerto serial
+            serialPort.closePort();
+
+            System.out.println("Puerto serial cerrado.");
+        } else {
+            System.out.println("No se pudo abrir el puerto serial.");
+        }
     }
 
     public static String recibirDato(){

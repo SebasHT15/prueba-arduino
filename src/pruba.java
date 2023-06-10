@@ -15,5 +15,7 @@ public class pruba {
         // Descomprimir el código comprimido
         String decompressedText = HuffmanEncoder.decompress(compressedCode, root);
         System.out.println("Texto descomprimido: " + decompressedText);
+
+        SerialCommunication.enviarDato("1");
     }
 }
