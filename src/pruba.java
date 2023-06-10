@@ -4,6 +4,7 @@ public class pruba {
     public static void main(String args[]){
         String contra = SerialCommunication.recibirDato();
         System.out.println(contra);
+
         String compressedCode = HuffmanEncoder.compress(contra);
         System.out.println("Código comprimido: " + compressedCode);
 
@@ -14,7 +15,5 @@ public class pruba {
         // Descomprimir el código comprimido
         String decompressedText = HuffmanEncoder.decompress(compressedCode, root);
         System.out.println("Texto descomprimido: " + decompressedText);
-
-
     }
 }

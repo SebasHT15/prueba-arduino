@@ -32,8 +32,6 @@ public class SerialCommunication {
             if (serialPort.openPort()) {
                 System.out.println("Puerto serial abierto correctamente.");
 
-                // Variable para almacenar el string concatenado
-
                 // Crea un hilo para recibir datos continuamente
                 Thread thread = new Thread(() -> {
                     long startTime = System.currentTimeMillis();
